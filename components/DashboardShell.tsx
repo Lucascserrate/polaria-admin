@@ -9,6 +9,7 @@ import {
 	LayoutDashboard,
 	LogOut,
 	ShieldCheck,
+	Users,
 	type LucideIcon,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -34,6 +35,7 @@ const NAV: Array<{
 }> = [
 	{ href: '/overview', label: 'Overview', icon: LayoutDashboard },
 	{ href: TENANTS_BASE_ROUTE, label: 'Negocios', icon: Building2 },
+	{ href: '/users', label: 'Usuarios', icon: Users },
 	{
 		href: ADMINS_ROUTE,
 		label: 'Administradores',
