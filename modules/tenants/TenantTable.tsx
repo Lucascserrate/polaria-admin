@@ -18,6 +18,7 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
+import { formatDay } from '@/lib/date';
 import { cn } from '@/lib/utils';
 import { businessTypeLabel } from './business-types';
 import type {
@@ -137,6 +138,7 @@ export function TenantTable({
 							<TableHead>WhatsApp</TableHead>
 							<TableHead>Estado</TableHead>
 							<TableHead>Suscripción</TableHead>
+							<TableHead className="text-right">Reservas</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
@@ -156,7 +158,12 @@ export function TenantTable({
 											}
 										}}
 									>
-										<TableCell className="font-medium">{tenant.name}</TableCell>
+										<TableCell>
+											<span className="block font-medium">{tenant.name}</span>
+											<span className="block text-xs text-muted-foreground">
+												Alta: {formatDay(tenant.createdAt)}
+											</span>
+										</TableCell>
 										<TableCell>
 											{businessTypeLabel(tenant.businessType) ?? 'Sin definir'}
 										</TableCell>
@@ -175,6 +182,9 @@ export function TenantTable({
 										</TableCell>
 										<TableCell>
 											<SubscriptionCell subscription={tenant.subscription} />
+										</TableCell>
+										<TableCell className="text-right tabular-nums">
+											{tenant.appointmentsCount}
 										</TableCell>
 									</TableRow>
 								</ContextMenuTrigger>
@@ -230,6 +240,18 @@ export function TenantTable({
 										<span className="text-muted-foreground">Suscripción</span>
 										<span className="text-right">
 											<SubscriptionCell subscription={tenant.subscription} />
+										</span>
+									</span>
+									<span className="flex items-center justify-between gap-3">
+										<span className="text-muted-foreground">Reservas</span>
+										<span className="text-right font-medium tabular-nums">
+											{tenant.appointmentsCount}
+										</span>
+									</span>
+									<span className="flex items-center justify-between gap-3">
+										<span className="text-muted-foreground">Alta</span>
+										<span className="text-right font-medium">
+											{formatDay(tenant.createdAt)}
 										</span>
 									</span>
 								</span>

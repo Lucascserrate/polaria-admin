@@ -62,6 +62,8 @@ export interface Tenant {
  */
 export interface TenantListItem extends Tenant {
 	subscription: TenantSubscription;
+	/** Todas las reservas, canceladas incluidas: lo mismo que cuenta el Overview. */
+	appointmentsCount: number;
 }
 
 /**
