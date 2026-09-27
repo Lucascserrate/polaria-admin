@@ -4,11 +4,13 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import axios from 'axios';
-import { Building2, LogOut, type LucideIcon } from 'lucide-react';
+import { Building2, LogOut, ShieldCheck, type LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Logo } from '@/components/logo';
+import { SessionContext } from '@/components/session-context';
 import { cn } from '@/lib/utils';
+import { ADMIN_ROLE_LABELS, ADMINS_ROUTE } from '@/modules/admins/roles';
 import { TENANTS_BASE_ROUTE } from '@/modules/tenants/routes';
 import {
 	getSession,
@@ -17,17 +19,26 @@ import {
 	type Session,
 } from '@/services/session.service';
 
-const NAV: Array<{ href: string; label: string; icon: LucideIcon }> = [
+/** `roles` esconde la entrada; la que manda es la API, que responde 403. */
+const NAV: Array<{
+	href: string;
+	label: string;
+	icon: LucideIcon;
+	roles?: AdminRole[];
+}> = [
 	{ href: TENANTS_BASE_ROUTE, label: 'Negocios', icon: Building2 },
+	{
+		href: ADMINS_ROUTE,
+		label: 'Administradores',
+		icon: ShieldCheck,
+		roles: ['SUPER_ADMIN'],
+	},
 ];
 
-const ROLE_LABELS: Record<AdminRole, string> = {
-	SUPER_ADMIN: 'Super admin',
-	ADMIN: 'Admin',
-};
-
 type State =
-	{ kind: 'loading' } | { kind: 'ready'; session: Session } | { kind: 'error' };
+	| { kind: 'loading' }
+	| { kind: 'ready'; session: Session }
+	| { kind: 'error'; detail: string };
 
 /**
  * El marco de todas las pantallas: navegación, y la sesión resuelta antes de
@@ -45,7 +56,16 @@ const DashboardShell = ({ children }: { children: React.ReactNode }) => {
 			.catch((cause) => {
 				// El 401 ya lo manda a /login el interceptor.
 				if (axios.isAxiosError(cause) && cause.response?.status === 401) return;
-				setState({ kind: 'error' });
+				// Sin respuesta es red o CORS; con respuesta, el código dice cuál.
+				const status = axios.isAxiosError(cause)
+					? cause.response?.status
+					: null;
+				setState({
+					kind: 'error',
+					detail: status
+						? `La API respondió ${status}.`
+						: 'La API no respondió (caída, o CORS no admite este origen).',
+				});
 			});
 	}, []);
 
@@ -68,9 +88,10 @@ const DashboardShell = ({ children }: { children: React.ReactNode }) => {
 
 	if (state.kind === 'error') {
 		return (
-			<p className="py-16 text-center text-muted-foreground">
-				No pudimos conectar con la API. Recargá la página en un momento.
-			</p>
+			<div className="space-y-1 py-16 text-center text-muted-foreground">
+				<p>No pudimos leer tu sesión. Recargá la página en un momento.</p>
+				<p className="text-xs">{state.detail}</p>
+			</div>
 		);
 	}
 
@@ -88,7 +109,9 @@ const DashboardShell = ({ children }: { children: React.ReactNode }) => {
 					</Link>
 
 					<nav className="flex gap-1 lg:mt-6 lg:flex-col">
-						{NAV.map(({ href, label, icon: Icon }) => {
+						{NAV.filter(
+							({ roles }) => !roles || roles.includes(session.role),
+						).map(({ href, label, icon: Icon }) => {
 							const active = pathname.startsWith(href);
 
 							return (
@@ -115,7 +138,7 @@ const DashboardShell = ({ children }: { children: React.ReactNode }) => {
 					<div className="min-w-0 flex-1">
 						<p className="truncate text-xs">{session.email}</p>
 						<p className="text-xs text-muted-foreground">
-							{ROLE_LABELS[session.role] ?? session.role}
+							{ADMIN_ROLE_LABELS[session.role] ?? session.role}
 						</p>
 					</div>
 					<Button
@@ -134,7 +157,11 @@ const DashboardShell = ({ children }: { children: React.ReactNode }) => {
 				</div>
 			</aside>
 
-			<main className="min-w-0 flex-1">{children}</main>
+			<main className="min-w-0 flex-1">
+				<SessionContext.Provider value={session}>
+					{children}
+				</SessionContext.Provider>
+			</main>
 		</div>
 	);
 };
