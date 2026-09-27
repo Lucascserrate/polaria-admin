@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import axios from 'axios';
 import {
 	Building2,
+	CalendarDays,
 	LayoutDashboard,
 	LogOut,
 	ShieldCheck,
@@ -36,6 +37,7 @@ const NAV: Array<{
 	{ href: '/overview', label: 'Overview', icon: LayoutDashboard },
 	{ href: TENANTS_BASE_ROUTE, label: 'Negocios', icon: Building2 },
 	{ href: '/users', label: 'Usuarios', icon: Users },
+	{ href: '/appointments', label: 'Reservas', icon: CalendarDays },
 	{
 		href: ADMINS_ROUTE,
 		label: 'Administradores',
