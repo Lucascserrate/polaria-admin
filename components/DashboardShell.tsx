@@ -4,7 +4,13 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import axios from 'axios';
-import { Building2, LogOut, ShieldCheck, type LucideIcon } from 'lucide-react';
+import {
+	Building2,
+	LayoutDashboard,
+	LogOut,
+	ShieldCheck,
+	type LucideIcon,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Logo } from '@/components/logo';
@@ -26,6 +32,7 @@ const NAV: Array<{
 	icon: LucideIcon;
 	roles?: AdminRole[];
 }> = [
+	{ href: '/overview', label: 'Overview', icon: LayoutDashboard },
 	{ href: TENANTS_BASE_ROUTE, label: 'Negocios', icon: Building2 },
 	{
 		href: ADMINS_ROUTE,

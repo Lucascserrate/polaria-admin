@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { Plus } from 'lucide-react';
@@ -52,11 +52,6 @@ export default function TenantManagementPage() {
 			})
 			.finally(() => setLoading(false));
 	}, []);
-
-	const activeCount = useMemo(
-		() => tenants.filter((tenant) => tenant.status !== 'inactive').length,
-		[tenants],
-	);
 
 	const handleCreate = async (payload: CreateTenantDto) => {
 		setCreating(true);
@@ -124,43 +119,6 @@ export default function TenantManagementPage() {
 					Todos los negocios de Polaria: su ficha, su suscripción y su conexión
 					con WhatsApp.
 				</p>
-			</div>
-
-			<div className="grid gap-4 md:grid-cols-3">
-				<Card>
-					<CardHeader className="pb-2">
-						<CardTitle className="text-sm font-medium text-muted-foreground">
-							Total
-						</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<p className="text-2xl font-bold">{tenants.length}</p>
-					</CardContent>
-				</Card>
-
-				<Card>
-					<CardHeader className="pb-2">
-						<CardTitle className="text-sm font-medium text-muted-foreground">
-							Activos
-						</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<p className="text-2xl font-bold text-success">{activeCount}</p>
-					</CardContent>
-				</Card>
-
-				<Card>
-					<CardHeader className="pb-2">
-						<CardTitle className="text-sm font-medium text-muted-foreground">
-							Inactivos
-						</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<p className="text-2xl font-bold text-muted-foreground">
-							{tenants.length - activeCount}
-						</p>
-					</CardContent>
-				</Card>
 			</div>
 
 			<Card>
