@@ -1,0 +1,278 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--font-sans: var(--font-sans);
+	--font-mono: var(--font-geist-mono);
+	--color-sidebar-ring: var(--sidebar-ring);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar: var(--sidebar);
+	--color-chart-5: var(--chart-5);
+	--color-chart-4: var(--chart-4);
+	--color-chart-3: var(--chart-3);
+	--color-chart-2: var(--chart-2);
+	--color-chart-1: var(--chart-1);
+	--color-ring: var(--ring);
+	--color-input: var(--input);
+	--color-border: var(--border);
+	--color-destructive: var(--destructive);
+	--color-success: var(--success);
+	--color-warning: var(--warning);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-accent: var(--accent);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-muted: var(--muted);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-secondary: var(--secondary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-primary: var(--primary);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-popover: var(--popover);
+	--color-card-foreground: var(--card-foreground);
+	--color-card: var(--card);
+	--radius-sm: calc(var(--radius) * 0.6);
+	--radius-md: calc(var(--radius) * 0.8);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) * 1.4);
+	--radius-2xl: calc(var(--radius) * 1.8);
+	--radius-3xl: calc(var(--radius) * 2.2);
+	--radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+	/*
+	 * Lo que el navegador dibuja por su cuenta y no pasa por estas variables: el
+	 * selector nativo de fecha, el menú de un `select`, el autocompletado, el
+	 * fondo detrás del rebote del scroll. Sin esto quedan claros dentro de una
+	 * pantalla oscura, que es donde el modo oscuro se nota a medio hacer.
+	 */
+	color-scheme: light;
+	--background: oklch(1 0 0);
+	--foreground: oklch(0.145 0 0);
+	--card: oklch(1 0 0);
+	--card-foreground: oklch(0.145 0 0);
+	--popover: oklch(1 0 0);
+	--popover-foreground: oklch(0.145 0 0);
+	--primary: oklch(0.205 0 0);
+	--primary-foreground: oklch(0.985 0 0);
+	--secondary: oklch(0.97 0 0);
+	--secondary-foreground: oklch(0.205 0 0);
+	--muted: oklch(0.97 0 0);
+	--muted-foreground: oklch(0.556 0 0);
+	--accent: oklch(0.97 0 0);
+	--accent-foreground: oklch(0.205 0 0);
+	/*
+	 * Los tres tonos de estado. `destructive` ya venía; `success` y `warning` se
+	 * agregaron con la misma forma —un color, no un par fondo/texto— porque se
+	 * usan igual: texto de un error, de un aviso, de un "listo".
+	 *
+	 * Son tokens y no un `text-amber-600` con su `dark:` al lado repetido en cada
+	 * pantalla, porque escrito a mano en ocho lugares el noveno sale mal: alcanza
+	 * con que alguien copie la línea y se olvide la variante para tener un aviso
+	 * ilegible en oscuro, y nadie lo va a ver hasta que un cliente lo reporte.
+	 */
+	--destructive: oklch(0.577 0.245 27.325);
+	--success: oklch(0.596 0.145 163.225);
+	/* amber-700: el ámbar se vuelve ilegible sobre blanco antes que los otros. */
+	--warning: oklch(0.555 0.163 48.998);
+	--border: oklch(0.922 0 0);
+	--input: oklch(0.922 0 0);
+	--ring: oklch(0.708 0 0);
+	--chart-1: oklch(0.809 0.105 251.813);
+	--chart-2: oklch(0.623 0.214 259.815);
+	--chart-3: oklch(0.546 0.245 262.881);
+	--chart-4: oklch(0.488 0.243 264.376);
+	--chart-5: oklch(0.424 0.199 265.638);
+	--radius: 0.625rem;
+	--sidebar: oklch(0.985 0 0);
+	--sidebar-foreground: oklch(0.145 0 0);
+	--sidebar-primary: oklch(0.205 0 0);
+	--sidebar-primary-foreground: oklch(0.985 0 0);
+	--sidebar-accent: oklch(0.97 0 0);
+	--sidebar-accent-foreground: oklch(0.205 0 0);
+	--sidebar-border: oklch(0.922 0 0);
+	--sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+	color-scheme: dark;
+	--background: oklch(0.145 0 0);
+	--foreground: oklch(0.985 0 0);
+	--card: oklch(0.205 0 0);
+	--card-foreground: oklch(0.985 0 0);
+	--popover: oklch(0.205 0 0);
+	--popover-foreground: oklch(0.985 0 0);
+	--primary: oklch(0.922 0 0);
+	--primary-foreground: oklch(0.205 0 0);
+	--secondary: oklch(0.269 0 0);
+	--secondary-foreground: oklch(0.985 0 0);
+	--muted: oklch(0.269 0 0);
+	--muted-foreground: oklch(0.708 0 0);
+	--accent: oklch(0.269 0 0);
+	--accent-foreground: oklch(0.985 0 0);
+	/* Sobre fondo oscuro los tres suben de luminosidad para no apagarse. */
+	--destructive: oklch(0.704 0.191 22.216);
+	--success: oklch(0.765 0.177 163.223);
+	--warning: oklch(0.828 0.189 84.429);
+	--border: oklch(1 0 0 / 10%);
+	--input: oklch(1 0 0 / 15%);
+	--ring: oklch(0.556 0 0);
+	--chart-1: oklch(0.809 0.105 251.813);
+	--chart-2: oklch(0.623 0.214 259.815);
+	--chart-3: oklch(0.546 0.245 262.881);
+	--chart-4: oklch(0.488 0.243 264.376);
+	--chart-5: oklch(0.424 0.199 265.638);
+	--sidebar: oklch(0.205 0 0);
+	--sidebar-foreground: oklch(0.985 0 0);
+	--sidebar-primary: oklch(0.488 0.243 264.376);
+	--sidebar-primary-foreground: oklch(0.985 0 0);
+	--sidebar-accent: oklch(0.269 0 0);
+	--sidebar-accent-foreground: oklch(0.985 0 0);
+	--sidebar-border: oklch(1 0 0 / 10%);
+	--sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
+	html {
+		@apply font-sans;
+	}
+}
+
+.appt-tinted {
+	background-image:
+		linear-gradient(to right, var(--appt-bar) 0 4px, transparent 4px),
+		linear-gradient(var(--appt-tint), var(--appt-tint));
+}
+
+.dark .appt-tinted {
+	background-image: none;
+	background-color: var(--appt-fill);
+}
+
+/**
+ * La barra de scroll.
+ *
+ * Tenía 4px de ancho. Se veía discreta y no servía para nada: con el mouse hay
+ * que **acertarle** a la barra para arrastrarla, y 4px es un blanco imposible.
+ * Donde eso se nota es en los negocios que atienden con una computadora sin
+ * rueda de mouse, que scrollean arrastrando y no podían.
+ *
+ * La solución no es una barra gorda. El truco es separar las dos medidas: el
+ * elemento mide 14px —que es lo que se puede agarrar, borde transparente
+ * incluido— pero solo se pintan los 6px de adentro, gracias a `background-clip`.
+ * Blanco grande, dibujo fino.
+ *
+ * Y siempre visible, nunca aparecer al pasar por encima: una barra que se
+ * esconde obliga a mover el mouse para descubrir dónde estaba, que es el mismo
+ * problema con un paso más.
+ */
+:root {
+	--scrollbar-track: oklch(0 0 0 / 4%);
+	--scrollbar-thumb: oklch(0 0 0 / 22%);
+	--scrollbar-thumb-hover: oklch(0 0 0 / 38%);
+	--scrollbar-thumb-active: oklch(0 0 0 / 50%);
+	--scrollbar-size: 14px;
+	/* Lo que queda sin pintar a cada lado del pulgar. */
+	--scrollbar-inset: 4px;
+}
+
+.dark {
+	--scrollbar-track: oklch(1 0 0 / 5%);
+	--scrollbar-thumb: oklch(1 0 0 / 22%);
+	--scrollbar-thumb-hover: oklch(1 0 0 / 38%);
+	--scrollbar-thumb-active: oklch(1 0 0 / 52%);
+}
+
+/* Firefox, que no entiende `::-webkit-scrollbar`. */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+::-webkit-scrollbar {
+	width: var(--scrollbar-size);
+	height: var(--scrollbar-size);
+}
+
+/*
+ * El canal se ve, apenas. No es decoración: hacer click en el canal salta una
+ * pantalla, y eso solo se usa si se nota que el canal está ahí.
+ */
+::-webkit-scrollbar-track {
+	background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--scrollbar-thumb);
+	/*
+	 * El borde transparente es del pulgar, así que sigue siendo agarrable: lo
+	 * único que hace es correr el relleno hacia adentro.
+	 */
+	border: var(--scrollbar-inset) solid transparent;
+	background-clip: padding-box;
+	border-radius: 9999px;
+}
+
+/*
+ * En una lista larga el pulgar se encoge en proporción al contenido y vuelve a
+ * ser inagarrable, justo donde más falta hace scrollear. 44px es el mínimo que
+ * se puede apuntar con comodidad.
+ *
+ * El mínimo va por orientación y no en la regla de arriba a propósito: un
+ * `min-width` suelto también se lo aplicaría el pulgar vertical, que mide lo
+ * que mide la barra, y lo dejaría de 44px de ancho dentro de un canal de 14.
+ */
+::-webkit-scrollbar-thumb:vertical {
+	min-height: 44px;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+	min-width: 44px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--scrollbar-thumb-hover);
+	background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:active {
+	background: var(--scrollbar-thumb-active);
+	background-clip: padding-box;
+}
+
+/* Sin esto, el cruce de la barra vertical con la horizontal queda gris. */
+::-webkit-scrollbar-corner {
+	background: transparent;
+}
+
+/*
+ * Con el dedo no hace falta agarrar nada: se arrastra el contenido. Ahí la barra
+ * vuelve a ser lo que debe, una señal de cuánto falta, y no se come 14px de una
+ * pantalla que ya es angosta.
+ */
+@media (pointer: coarse) {
+	:root {
+		--scrollbar-size: 6px;
+		--scrollbar-inset: 1px;
+	}
+
+	::-webkit-scrollbar-track {
+		background: transparent;
+	}
+}
