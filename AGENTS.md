@@ -20,13 +20,9 @@ la ve, así que las pantallas son Client Components que le hablan a la API con
 `withCredentials`, igual que el panel. Es lo contrario de `polaria-explore`, y
 no por descuido.
 
-**La sesión es la del panel, por ahora.** No hay login propio: se entra por el
-panel y este sitio reutiliza la cookie. El acceso lo decide `SuperAdminGuard`
-en el backend.
-
-**Suplantar deja este sitio sin servicio.** La cookie de soporte gana sobre la
-propia en toda la API, así que mientras hay una sesión de soporte abierta, todo
-acá responde 403. `DashboardShell` lo detecta y ofrece salir.
+**La sesión es propia.** Cookie `adminToken` de la API, emitida por
+`/admin/auth/google` sólo a quien está activo en `admin_users`. Es otra cookie
+que la del panel, así que suplantar un negocio no afecta al dashboard.
 
 **Copias del panel.** `components/ui`, `MapView`, el selector de ubicación, los
 rubros y el Embedded Signup de Meta están copiados de `polaria/client`. Son

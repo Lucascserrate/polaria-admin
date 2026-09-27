@@ -70,7 +70,7 @@ const TenantPage = () => {
 		}
 	}, [id]);
 
-	/** Ver `handleEnter` en el listado: por qué se va al panel en la misma pestaña. */
+	/** Ver `handleEnter` en el listado. */
 	const handleEnter = async () => {
 		if (!id) return;
 

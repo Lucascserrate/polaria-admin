@@ -2,24 +2,29 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import axios from 'axios';
-import { Building2, ShieldAlert, type LucideIcon } from 'lucide-react';
+import { Building2, LogOut, type LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Logo } from '@/components/logo';
-import { panelUrl } from '@/constants/env';
 import { cn } from '@/lib/utils';
 import { TENANTS_BASE_ROUTE } from '@/modules/tenants/routes';
 import {
-	exitImpersonation,
 	getSession,
+	logout,
+	type AdminRole,
 	type Session,
 } from '@/services/session.service';
 
 const NAV: Array<{ href: string; label: string; icon: LucideIcon }> = [
 	{ href: TENANTS_BASE_ROUTE, label: 'Negocios', icon: Building2 },
 ];
+
+const ROLE_LABELS: Record<AdminRole, string> = {
+	SUPER_ADMIN: 'Super admin',
+	ADMIN: 'Admin',
+};
 
 type State =
 	{ kind: 'loading' } | { kind: 'ready'; session: Session } | { kind: 'error' };
@@ -30,7 +35,9 @@ type State =
  */
 const DashboardShell = ({ children }: { children: React.ReactNode }) => {
 	const pathname = usePathname();
+	const router = useRouter();
 	const [state, setState] = useState<State>({ kind: 'loading' });
+	const [leaving, setLeaving] = useState(false);
 
 	useEffect(() => {
 		getSession()
@@ -41,6 +48,15 @@ const DashboardShell = ({ children }: { children: React.ReactNode }) => {
 				setState({ kind: 'error' });
 			});
 	}, []);
+
+	const leave = async () => {
+		setLeaving(true);
+		try {
+			await logout();
+		} finally {
+			router.replace('/login');
+		}
+	};
 
 	if (state.kind === 'loading') {
 		return (
@@ -58,13 +74,11 @@ const DashboardShell = ({ children }: { children: React.ReactNode }) => {
 		);
 	}
 
-	if (state.session.impersonatedBy) {
-		return <ImpersonationNotice session={state.session} />;
-	}
+	const { session } = state;
 
 	return (
 		<div className="flex min-h-full flex-col lg:flex-row">
-			<aside className="shrink-0 border-b border-border lg:w-60 lg:border-r lg:border-b-0">
+			<aside className="flex shrink-0 flex-col border-b border-border lg:w-60 lg:border-r lg:border-b-0">
 				<div className="flex items-center justify-between gap-4 px-4 py-3 lg:flex-col lg:items-stretch lg:px-3 lg:py-5">
 					<Link href="/" className="flex items-center gap-2 px-2">
 						<Logo className="text-lg" />
@@ -97,54 +111,30 @@ const DashboardShell = ({ children }: { children: React.ReactNode }) => {
 					</nav>
 				</div>
 
-				{state.session.email && (
-					<p className="hidden truncate px-5 pb-5 text-xs text-muted-foreground lg:block">
-						{state.session.email}
-					</p>
-				)}
+				<div className="hidden items-center gap-2 px-5 pb-5 lg:mt-auto lg:flex">
+					<div className="min-w-0 flex-1">
+						<p className="truncate text-xs">{session.email}</p>
+						<p className="text-xs text-muted-foreground">
+							{ROLE_LABELS[session.role] ?? session.role}
+						</p>
+					</div>
+					<Button
+						variant="ghost"
+						size="icon-sm"
+						aria-label="Cerrar sesión"
+						disabled={leaving}
+						onClick={() => void leave()}
+					>
+						{leaving ? (
+							<Spinner className="size-3.5" />
+						) : (
+							<LogOut className="size-4" />
+						)}
+					</Button>
+				</div>
 			</aside>
 
 			<main className="min-w-0 flex-1">{children}</main>
-		</div>
-	);
-};
-
-/**
- * Lo que se ve si se vuelve al dashboard con una sesión de soporte abierta.
- *
- * La cookie de soporte gana sobre la propia en toda la API, así que cada
- * pantalla de acá respondería 403. En vez de mostrar pantallas rotas, se dice
- * por qué y se ofrece salir.
- */
-const ImpersonationNotice = ({ session }: { session: Session }) => {
-	const [leaving, setLeaving] = useState(false);
-
-	const leave = async () => {
-		setLeaving(true);
-		try {
-			await exitImpersonation();
-		} finally {
-			window.location.reload();
-		}
-	};
-
-	return (
-		<div className="mx-auto flex h-full max-w-md flex-col items-center justify-center gap-4 px-6 text-center">
-			<ShieldAlert className="size-8 text-warning" />
-			<p>
-				Tenés una sesión de soporte abierta en{' '}
-				<span className="font-semibold">{session.businessName}</span>. Mientras
-				siga abierta, el dashboard no responde.
-			</p>
-			<div className="flex flex-wrap justify-center gap-2">
-				<Button asChild variant="outline">
-					<a href={panelUrl('/agenda')}>Volver al negocio</a>
-				</Button>
-				<Button disabled={leaving} onClick={() => void leave()}>
-					{leaving && <Spinner className="size-3.5" />}
-					Salir de la sesión de soporte
-				</Button>
-			</div>
 		</div>
 	);
 };

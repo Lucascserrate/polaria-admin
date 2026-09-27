@@ -76,12 +76,8 @@ export default function TenantManagementPage() {
 	};
 
 	/**
-	 * Abre la sesión de soporte y se va al panel, en la misma pestaña.
-	 *
-	 * La cookie de soporte vive en la API y gana sobre la propia en **todos** los
-	 * sitios, este incluido: mientras siga abierta, el dashboard responde 403.
-	 * Quedarse acá sería quedarse mirando una pantalla que no funciona. Se sale
-	 * con la franja del panel, que trae de vuelta a este listado.
+	 * Abre la sesión de soporte y se va al panel. La sesión del admin es otra
+	 * cookie y no se toca: la franja del panel trae de vuelta a este listado.
 	 */
 	const handleEnter = async (tenant: Tenant) => {
 		try {
