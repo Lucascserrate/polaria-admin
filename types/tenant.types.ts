@@ -87,7 +87,6 @@ export interface UpdateTenantDto {
 	longitude?: number | null;
 	email?: string | null;
 	timezone?: string;
-	status?: TenantStatus;
 	aiEnabled?: boolean;
 }
 

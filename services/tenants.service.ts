@@ -123,6 +123,14 @@ class TenantsService {
 	 * el navegador va a mandar sola en todo lo que venga después. La sesión propia
 	 * del super admin queda intacta, así que salir no pasa por Google de nuevo.
 	 */
+	/** Deshabilita o vuelve a habilitar el negocio. Devuelve la ficha actualizada. */
+	async setDisabled(tenantId: string, disabled: boolean): Promise<Tenant> {
+		const { data } = await axiosInstance.post(
+			`/support/tenants/${tenantId}/${disabled ? 'disable' : 'enable'}`,
+		);
+		return data;
+	}
+
 	async impersonate(tenantId: string): Promise<void> {
 		await axiosInstance.post(`/support/tenants/${tenantId}/impersonate`);
 	}

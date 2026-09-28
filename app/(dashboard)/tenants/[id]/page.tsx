@@ -25,6 +25,7 @@ const TenantPage = () => {
 	const [tenant, setTenant] = useState<Tenant | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [saving, setSaving] = useState(false);
+	const [statusPending, setStatusPending] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
@@ -87,6 +88,26 @@ const TenantPage = () => {
 		}
 	};
 
+	/** Actúa en el momento, como WhatsApp: no pasa por "Guardar cambios". */
+	const handleSetDisabled = async (disabled: boolean) => {
+		if (!id) return;
+		setStatusPending(true);
+		setError(null);
+
+		try {
+			setTenant(await tenantsService.setDisabled(id, disabled));
+		} catch (cause) {
+			setError(
+				axios.isAxiosError(cause) &&
+					typeof cause.response?.data?.message === 'string'
+					? cause.response.data.message
+					: 'No se pudo cambiar el estado del negocio. Intentá de nuevo.',
+			);
+		} finally {
+			setStatusPending(false);
+		}
+	};
+
 	const handleSave = async (payload: UpdateTenantDto) => {
 		if (!id) return;
 		setSaving(true);
@@ -135,6 +156,8 @@ const TenantPage = () => {
 			tenant={tenant}
 			onRefresh={() => void refresh()}
 			onEnter={() => void handleEnter()}
+			onSetDisabled={(disabled) => void handleSetDisabled(disabled)}
+			statusPending={statusPending}
 			saving={saving}
 			error={error}
 			onSave={(payload) => void handleSave(payload)}

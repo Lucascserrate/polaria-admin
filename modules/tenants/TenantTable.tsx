@@ -38,7 +38,7 @@ interface TenantTableProps {
 
 const statusLabel: Record<string, string> = {
 	active: 'Activo',
-	inactive: 'Inactivo',
+	inactive: 'Deshabilitado',
 };
 
 /**

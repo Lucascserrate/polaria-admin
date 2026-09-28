@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react';
 import type {
 	Tenant,
 	TenantLocation,
-	TenantStatus,
 	UpdateTenantDto,
 } from '@/types/tenant.types';
 
@@ -25,7 +24,6 @@ export interface TenantDraft {
 	address: string;
 	/** `null` mientras el negocio no tenga coordenadas cargadas. */
 	location: TenantLocation | null;
-	status: TenantStatus;
 	aiEnabled: boolean;
 }
 
@@ -59,7 +57,6 @@ const draftFrom = (tenant: Tenant): TenantDraft => ({
 	timezone: tenant.timezone ?? '',
 	address: tenant.address ?? '',
 	location: locationOf(tenant),
-	status: tenant.status ?? 'active',
 	aiEnabled: tenant.aiEnabled ?? true,
 });
 
@@ -125,7 +122,6 @@ export const useTenantDraft = (tenant: Tenant) => {
 		address: draft.address.trim() || null,
 		latitude: draft.location?.latitude ?? null,
 		longitude: draft.location?.longitude ?? null,
-		status: draft.status,
 		aiEnabled: draft.aiEnabled,
 	});
 

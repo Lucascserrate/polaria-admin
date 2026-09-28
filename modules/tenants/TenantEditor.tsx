@@ -13,6 +13,7 @@ import type {
 	UpdateTenantDto,
 } from '@/types/tenant.types';
 import { TENANTS_BASE_ROUTE } from './routes';
+import { DisableTenantButton, DisabledNotice } from './DisableTenantControl';
 import useTenantDraft, { type SectionKey } from './useTenantDraft';
 import useTenantSubscription from './useTenantSubscription';
 import ProfileSection from './sections/ProfileSection';
@@ -25,6 +26,8 @@ interface Props {
 	tenant: Tenant;
 	onRefresh: () => void;
 	onEnter: () => void;
+	onSetDisabled: (disabled: boolean) => void;
+	statusPending?: boolean;
 	saving?: boolean;
 	error?: string | null;
 	onSave: (payload: UpdateTenantDto) => void;
@@ -61,7 +64,7 @@ const NAV: NavGroup[] = [
 	},
 	{
 		label: 'Sistema',
-		items: [{ key: 'system', label: 'Estado e IA' }],
+		items: [{ key: 'system', label: 'IA' }],
 	},
 ];
 
@@ -85,6 +88,8 @@ const TenantEditor: React.FC<Props> = ({
 	tenant,
 	onRefresh,
 	onEnter,
+	onSetDisabled,
+	statusPending = false,
 	saving = false,
 	error,
 	onSave,
@@ -105,8 +110,7 @@ const TenantEditor: React.FC<Props> = ({
 		if (key === 'whatsapp') return tenant.whatsappPhoneId ? 'Conectado' : null;
 		if (key === 'subscription')
 			return subscriptionBadge(subscription.subscription);
-		if (key === 'system')
-			return draft.status === 'inactive' ? 'Inactivo' : null;
+		if (key === 'system') return draft.aiEnabled ? null : 'IA apagada';
 		return null;
 	};
 
@@ -144,6 +148,11 @@ const TenantEditor: React.FC<Props> = ({
 						<LogIn className="size-4" />
 						Entrar al negocio
 					</Button>
+					<DisableTenantButton
+						tenant={tenant}
+						pending={statusPending}
+						onChange={onSetDisabled}
+					/>
 					<Button asChild variant="outline">
 						<Link href={TENANTS_BASE_ROUTE}>Cancelar</Link>
 					</Button>
@@ -156,6 +165,12 @@ const TenantEditor: React.FC<Props> = ({
 					</Button>
 				</div>
 			</div>
+
+			<DisabledNotice
+				tenant={tenant}
+				pending={statusPending}
+				onChange={onSetDisabled}
+			/>
 
 			{error && (
 				<p className="rounded-lg border border-red-500/50 bg-red-500/10 px-3 py-2 text-sm text-destructive">
