@@ -33,3 +33,15 @@ export const getCustomers = async (params: {
 	});
 	return data;
 };
+
+/** Corrige nombre o teléfono. `phone` vacío lo quita. Devuelve la fila actualizada. */
+export const updateCustomer = async (
+	id: string,
+	change: { name?: string; phone?: string },
+): Promise<Customer> => {
+	const { data } = await axiosInstance.patch<Customer>(
+		`/admin/customers/${id}`,
+		change,
+	);
+	return data;
+};

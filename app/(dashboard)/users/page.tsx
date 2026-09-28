@@ -89,7 +89,20 @@ export default function UsersPage() {
 			) : (
 				data && (
 					<>
-						<CustomerList customers={data.items} />
+						<CustomerList
+							customers={data.items}
+							onUpdated={(updated) =>
+								setData(
+									(current) =>
+										current && {
+											...current,
+											items: current.items.map((item) =>
+												item.id === updated.id ? updated : item,
+											),
+										},
+								)
+							}
+						/>
 
 						{pages > 1 && (
 							<div className="flex items-center justify-between gap-4 text-sm">
