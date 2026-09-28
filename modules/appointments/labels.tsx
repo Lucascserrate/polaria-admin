@@ -5,6 +5,7 @@ import {
 	Store,
 	type LucideIcon,
 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import type {
 	AdminAppointment,
 	ChannelFilter,
@@ -38,3 +39,13 @@ export const ChannelTag = ({ channel }: { channel: ChannelFilter }) => {
 		</span>
 	);
 };
+
+export const StatusBadge = ({
+	status,
+}: {
+	status: AdminAppointment['status'];
+}) => (
+	<Badge variant={status === 'cancelled' ? 'secondary' : 'outline'}>
+		{STATUS_LABELS[status] ?? status}
+	</Badge>
+);
