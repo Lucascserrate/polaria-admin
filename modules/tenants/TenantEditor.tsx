@@ -12,6 +12,7 @@ import type {
 	SubscriptionSummary,
 	UpdateTenantDto,
 } from '@/types/tenant.types';
+import { timeLeft } from './subscription-state';
 import { TENANTS_BASE_ROUTE } from './routes';
 import { DisableTenantButton, DisabledNotice } from './DisableTenantControl';
 import useTenantDraft, { type SectionKey } from './useTenantDraft';
@@ -273,7 +274,7 @@ const TenantEditor: React.FC<Props> = ({
 /**
  * Lo que la solapa dice de la suscripción, en el ancho de una etiqueta.
  *
- * Los días van sin unidad —"5 d"— porque en una etiqueta no entra más y porque
+ * Los días van abreviados —"5 d", o "5 h" el último día— porque en una etiqueta no entra más y porque
  * al lado dice "Suscripción": lo que se está contando no está en duda. Lo
  * vencido se nombra en palabras y no en días, que serían cero y no dicen nada.
  * El negocio que nunca arrancó la prueba no lleva etiqueta: una en cada solapa
@@ -286,9 +287,7 @@ const subscriptionBadge = (
 	if (subscription.state === 'TRIAL_EXPIRED') return 'Prueba vencida';
 	if (subscription.state === 'EXPIRED') return 'Vencida';
 
-	return subscription.daysRemaining !== null
-		? `${subscription.daysRemaining} d`
-		: null;
+	return timeLeft(subscription)?.short ?? null;
 };
 
 export default TenantEditor;

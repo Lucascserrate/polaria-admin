@@ -7,7 +7,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { formatDay } from '@/lib/date';
 import { cn } from '@/lib/utils';
 import type { SubscriptionSummary } from '@/types/tenant.types';
-import { subscriptionState } from '../subscription-state';
+import { subscriptionState, timeLeft } from '../subscription-state';
 import SectionHeader from '../SectionHeader';
 
 interface Props {
@@ -105,6 +105,7 @@ const SubscriptionSection: React.FC<Props> = ({
 	}
 
 	const state = subscriptionState(subscription.state);
+	const left = timeLeft(subscription);
 	const paySize = sizeOf('pay');
 	const trialSize = sizeOf('trial');
 	const payOption =
@@ -124,12 +125,7 @@ const SubscriptionSection: React.FC<Props> = ({
 
 				<p className="text-sm text-muted-foreground">
 					{until(subscription)}
-					{subscription.daysRemaining !== null &&
-						` · ${
-							subscription.daysRemaining === 1
-								? 'queda 1 día'
-								: `quedan ${subscription.daysRemaining} días`
-						}`}
+					{left && ` · ${left.one ? 'queda' : 'quedan'} ${left.amount}`}
 				</p>
 
 				{/*

@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og';
+import { AppIcon } from '@/components/app-icon';
 
 export const contentType = 'image/png';
 
@@ -46,26 +47,9 @@ export default async function Icon({ id }: { id: Promise<string> }) {
 		SIZES.find(({ size }) => String(size) === requested) ?? SIZES[0];
 
 	return new ImageResponse(
-		<div
-			style={{
-				width: '100%',
-				height: '100%',
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				backgroundColor: '#111111',
-				// El mismo redondeo que tenía el de 32, en proporción, para que los
-				// tres se lean como el mismo icono.
-				borderRadius: Math.round((size * 7) / 32),
-			}}
-		>
-			<svg width={glyph} height={glyph} viewBox="0 0 24 24" fill="none">
-				<path
-					d="M12 1.5c.62 5.6 4.9 9.88 10.5 10.5-5.6.62-9.88 4.9-10.5 10.5-.62-5.6-4.9-9.88-10.5-10.5C7.1 11.38 11.38 7.1 12 1.5Z"
-					fill="#ffffff"
-				/>
-			</svg>
-		</div>,
+		// El mismo redondeo que tenía el de 32, en proporción, para que los tres
+		// se lean como el mismo icono.
+		<AppIcon glyph={glyph} radius={Math.round((size * 7) / 32)} />,
 		{ width: size, height: size },
 	);
 }
