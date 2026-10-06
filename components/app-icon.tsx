@@ -1,14 +1,4 @@
-/**
- * El dibujo de los iconos del sitio —favicon e icono de la pantalla de inicio—,
- * para `ImageResponse`.
- *
- * Fondo cian y estrella oscura, al revés que el panel: la pestaña, los
- * favoritos y la pantalla de inicio son justo donde los dos sitios quedan uno
- * al lado del otro, y con el mismo icono negro no se distingue cuál es cuál. El
- * cian es el de la estrella del logo en el menú (`components/logo.tsx`), así
- * que sigue siendo Polaria.
- */
-export const APP_ICON = { background: '#82b4ff', glyph: '#0a0e18' };
+export const APP_ICON = { background: '#111111', glyph: '#82b4ff' };
 
 export const AppIcon = ({
 	glyph,
