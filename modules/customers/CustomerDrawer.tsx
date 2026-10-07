@@ -1,10 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import axios from 'axios';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
 	Sheet,
 	SheetContent,
@@ -12,11 +8,10 @@ import {
 	SheetHeader,
 	SheetTitle,
 } from '@/components/ui/sheet';
-import { Spinner } from '@/components/ui/spinner';
-import { formatDay } from '@/lib/date';
-import { updateCustomer, type Customer } from '@/services/customers.service';
+import type { Customer } from '@/services/customers.service';
+import CustomerDetail from './CustomerDetail';
+import CustomerEditForm from './CustomerEditForm';
 import OwnerBadges from './OwnerBadges';
-import { activityOf } from './format';
 
 interface Props {
 	customer: Customer | null;
@@ -29,7 +24,9 @@ const CustomerDrawer = ({ customer, open, onOpenChange, onSaved }: Props) => (
 	<Sheet open={open} onOpenChange={onOpenChange}>
 		<SheetContent>
 			{customer && (
-				<CustomerDetail
+				// La `key` hace que otra persona abra siempre en el detalle, no en
+				// la edición que quedó a medias con la anterior.
+				<CustomerPanel
 					key={customer.id}
 					customer={customer}
 					onSaved={onSaved}
@@ -39,54 +36,18 @@ const CustomerDrawer = ({ customer, open, onOpenChange, onSaved }: Props) => (
 	</Sheet>
 );
 
-const CustomerDetail = ({
+/**
+ * Abre mostrando y se edita a pedido: corregir un nombre es la excepción, y un
+ * formulario abierto de entrada invita a tocar lo que sólo se vino a mirar.
+ */
+const CustomerPanel = ({
 	customer,
 	onSaved,
 }: {
 	customer: Customer;
 	onSaved: (customer: Customer) => void;
 }) => {
-	const initialPhone = customer.phone ? `+${customer.phone}` : '';
-	const [name, setName] = useState(customer.name);
-	const [phone, setPhone] = useState(initialPhone);
-	const [saving, setSaving] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-	const [saved, setSaved] = useState(false);
-
-	const nameChanged = name.trim() !== customer.name;
-	const phoneChanged = phone.trim() !== initialPhone;
-
-	const save = async (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-		if (!name.trim()) {
-			setError('El nombre no puede quedar vacío.');
-			return;
-		}
-
-		setSaving(true);
-		setError(null);
-		setSaved(false);
-		try {
-			// Sólo lo que cambió: guardar el nombre no tiene por qué re-normalizar
-			// un teléfono que nadie tocó.
-			const updated = await updateCustomer(customer.id, {
-				...(nameChanged && { name: name.trim() }),
-				...(phoneChanged && { phone: phone.trim() }),
-			});
-			onSaved(updated);
-			setPhone(updated.phone ? `+${updated.phone}` : '');
-			setSaved(true);
-		} catch (cause) {
-			setError(
-				axios.isAxiosError(cause) &&
-					typeof cause.response?.data?.message === 'string'
-					? cause.response.data.message
-					: 'No se pudieron guardar los cambios. Intentá de nuevo.',
-			);
-		} finally {
-			setSaving(false);
-		}
-	};
+	const [editing, setEditing] = useState(false);
 
 	return (
 		<>
@@ -100,72 +61,22 @@ const CustomerDetail = ({
 				)}
 			</SheetHeader>
 
-			<div className="space-y-6 px-6 pb-6 text-sm">
-				<form onSubmit={(event) => void save(event)} className="space-y-4">
-					<div className="space-y-2">
-						<Label htmlFor="customer-name">Nombre</Label>
-						<Input
-							id="customer-name"
-							value={name}
-							onChange={(event) => setName(event.target.value)}
-						/>
-					</div>
-
-					<div className="space-y-2">
-						<Label htmlFor="customer-phone">Teléfono</Label>
-						<Input
-							id="customer-phone"
-							type="tel"
-							inputMode="tel"
-							value={phone}
-							onChange={(event) => setPhone(event.target.value)}
-							placeholder="+591 7000 0000"
-						/>
-						<p className="text-xs text-muted-foreground">
-							Con + y código de país. Sin él, se toma como número de Bolivia.
-							Vacío lo quita, y la persona lo va a tener que dar al reservar.
-						</p>
-					</div>
-
-					{error && <p className="text-destructive">{error}</p>}
-					{saved && !error && (
-						<p className="text-success">Cambios guardados.</p>
-					)}
-
-					<Button
-						type="submit"
-						disabled={saving || (!nameChanged && !phoneChanged)}
-					>
-						{saving && <Spinner className="size-3.5" />}
-						Guardar cambios
-					</Button>
-				</form>
-
-				<section className="space-y-2">
-					<h3 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-						Actividad
-					</h3>
-					<dl className="space-y-1.5 rounded-lg border border-border p-3">
-						<Row label="Reservas" value={activityOf(customer)} />
-						<Row
-							label="Última reserva"
-							value={
-								customer.lastBookedAt ? formatDay(customer.lastBookedAt) : '—'
-							}
-						/>
-						<Row label="Alta" value={formatDay(customer.createdAt)} />
-					</dl>
-				</section>
+			<div className="px-6 pb-6 text-sm">
+				{editing ? (
+					<CustomerEditForm
+						customer={customer}
+						onCancel={() => setEditing(false)}
+						onSaved={(updated) => {
+							onSaved(updated);
+							setEditing(false);
+						}}
+					/>
+				) : (
+					<CustomerDetail customer={customer} onEdit={() => setEditing(true)} />
+				)}
 			</div>
 		</>
 	);
 };
-
-const Row = ({ label, value }: { label: string; value: string }) => (
-	<div className="flex justify-between gap-3">
-		<dt className="shrink-0 text-muted-foreground">{label}</dt>
-		<dd className="min-w-0 text-right font-medium">{value}</dd>
-	</div>
-);
 
 export default CustomerDrawer;

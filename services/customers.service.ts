@@ -45,3 +45,22 @@ export const updateCustomer = async (
 	);
 	return data;
 };
+
+/** Un negocio donde reservó una cuenta, con lo que reservó ahí. */
+export interface CustomerBusiness {
+	id: string;
+	name: string;
+	/** Canceladas incluidas, como `Customer.appointmentsCount`. */
+	appointmentsCount: number;
+	lastBookedAt: string;
+}
+
+/** Los negocios donde reservó, el más reciente primero. */
+export const getCustomerBusinesses = async (
+	id: string,
+): Promise<CustomerBusiness[]> => {
+	const { data } = await axiosInstance.get<CustomerBusiness[]>(
+		`/admin/customers/${id}/businesses`,
+	);
+	return data;
+};
